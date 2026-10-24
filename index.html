@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LUMEN Studio — Simple E-Commerce Store</title>
+  <meta name="description" content="A curated e-commerce storefront crafted for the CodeAlpha internship using HTML5, CSS3, Vanilla JavaScript, Node.js Express, and MongoDB Atlas." />
+  
+  <!-- Fonts: Playfair Display + Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+
+  <!-- Top Announcement Strip -->
+  <aside class="top-announcement" aria-label="Internship Announcement">
+    <span>CodeAlpha Internship Showcase · Free shipping on orders over $150 · Use voucher <a id="promoCodeLink">CODEALPHA10</a> for 10% off</span>
+  </aside>
+
+  <!-- Top Navigation Bar Contract -->
+  <header class="header-nav">
+    <div class="container header-container">
+      <!-- Zone 1: Single Brand Wordmark -->
+      <a href="/" class="brand-wordmark">
+        LUMEN STUDIO <span class="brand-dot"></span>
+      </a>
+
+      <!-- Zone 2: 4-5 Concise Single-Line Navigation Links -->
+      <nav class="nav-links" aria-label="Main Navigation">
+        <a href="#catalogSection" class="nav-link active">Collections</a>
+        <a href="#catalogSection" class="nav-link">Living</a>
+        <a href="#catalogSection" class="nav-link">Decor</a>
+        <a href="#catalogSection" class="nav-link">Audio</a>
+        <a href="#catalogSection" class="nav-link">Wellness</a>
+      </nav>
+
+      <!-- Zone 3: Header Actions -->
+      <div class="header-actions">
+        <!-- MongoDB Atlas Live Status Trigger -->
+        <button id="dbStatusBtn" class="user-menu-btn" title="View MongoDB Atlas Status">
+          <span style="display:inline-block; width:8px; height:8px; background:#10b981; border-radius:50%;"></span>
+          <span>Database</span>
+        </button>
+
+        <!-- User Authentication State -->
+        <div id="headerUserActions">
+          <button id="signInBtn" class="btn btn-secondary" style="padding: 8px 16px; font-size: 0.8rem;">
+            Sign In
+          </button>
+        </div>
+
+        <!-- Cart Bag Button -->
+        <button id="cartBtn" class="btn-icon" aria-label="View shopping bag" title="Shopping Bag">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+            <path d="M3 6h18" />
+            <path d="M16 10a4 4 0 0 1-8 0" />
+          </svg>
+          <span id="cartBadge" class="badge-counter" style="display: none;">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="container">
+        <div class="hero-grid">
+          <div class="hero-content">
+            <span class="hero-kicker">New Season 2026</span>
+            <h1 class="hero-title">Elevate your living with intentional objects.</h1>
+            <p class="hero-description">
+              A meticulously edited collection of sculptural home decor, precision audio engineering, and pure organic textiles crafted for lasting presence.
+            </p>
+            <div class="hero-actions">
+              <button id="heroCtaBtn" class="btn btn-primary">
+                Explore Catalog
+              </button>
+              <button id="heroDiagBtn" onclick="document.getElementById('dbStatusBtn').click()" class="btn btn-secondary">
+                MongoDB Architecture
+              </button>
+            </div>
+          </div>
+          <div class="hero-media">
+            <img src="/images/hero.jpg" alt="Minimalist architectural living space with leather lounge" class="hero-img" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Product Catalog Section -->
+    <section id="catalogSection" class="catalog-section">
+      <div class="container">
+        <div class="catalog-header">
+          <h2 class="section-title">Curated Catalog</h2>
+          <p class="section-subtitle">Discover handcrafted ceramics, acoustics, and textiles with full order persistence.</p>
+        </div>
+
+        <!-- Filter & Search Toolbar -->
+        <div class="toolbar-container">
+          <div id="categoryTabs" class="category-tabs">
+            <button class="tab-btn active">All</button>
+          </div>
+
+          <div class="filter-actions">
+            <div class="search-box">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="searchInput" class="search-input" placeholder="Search products, materials..." aria-label="Search catalog" />
+            </div>
+
+            <select id="sortSelect" class="sort-select" aria-label="Sort products">
+              <option value="featured">Featured First</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="price-high">Price: High to Low</option>
+              <option value="rating">Highest Rated</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Product Grid -->
+        <div id="productGrid" class="product-grid" aria-live="polite">
+          <!-- Dynamically populated via JavaScript -->
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Cart Slide-Over Drawer -->
+  <div id="cartOverlay" class="modal-overlay" style="z-index: 205;"></div>
+  <aside id="cartDrawer" class="cart-drawer" aria-label="Shopping Bag">
+    <div class="cart-drawer-header">
+      <h3 style="font-size: 1.25rem;">Shopping Bag</h3>
+      <button id="closeCartBtn" class="modal-close-btn" aria-label="Close cart">✕</button>
+    </div>
+
+    <div id="cartItemsList" class="cart-drawer-body">
+      <!-- Items dynamically populated -->
+    </div>
+
+    <div id="cartFooter" class="cart-drawer-footer">
+      <div class="coupon-group">
+        <input type="text" id="couponCodeInput" class="coupon-input" placeholder="Promo code (e.g. CODEALPHA10)" />
+        <button id="applyCouponBtn" class="btn btn-secondary" style="padding: 8px 14px; font-size: 0.8rem;">Apply</button>
+      </div>
+
+      <div class="order-summary-row">
+        <span>Subtotal</span>
+        <span id="cartSubtotal" class="tabular-nums">$0.00</span>
+      </div>
+      <div id="cartDiscountRow" class="order-summary-row" style="display: none; color: var(--status-success);">
+        <span>Promo Discount</span>
+        <span id="cartDiscount" class="tabular-nums">-$0.00</span>
+      </div>
+      <div class="order-summary-row">
+        <span>Shipping (Free &gt; $150)</span>
+        <span id="cartShipping" class="tabular-nums">$0.00</span>
+      </div>
+      <div class="order-summary-row">
+        <span>Estimated Tax (8%)</span>
+        <span id="cartTax" class="tabular-nums">$0.00</span>
+      </div>
+      <div class="order-summary-row order-summary-total">
+        <span>Total</span>
+        <span id="cartTotal" class="tabular-nums">$0.00</span>
+      </div>
+
+      <button id="cartCheckoutBtn" class="btn btn-primary" style="width: 100%; margin-top: 16px; padding: 14px;">
+        Proceed to Checkout
+      </button>
+    </div>
+  </aside>
+
+  <!-- Product Detail Modal (PDP) -->
+  <div id="pdpModal" class="modal-overlay">
+    <div class="modal-card modal-card-lg">
+      <div class="modal-header">
+        <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted);">
+          Product Details
+        </div>
+        <button class="modal-close-btn">✕</button>
+      </div>
+      <div id="pdpContent" class="modal-body">
+        <!-- Populated via JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- User Authentication Modal -->
+  <div id="authModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Account Access</h3>
+        <button class="modal-close-btn">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="auth-nav-tabs">
+          <button id="tabLogin" class="auth-nav-tab active">Sign In</button>
+          <button id="tabRegister" class="auth-nav-tab">Register</button>
+        </div>
+
+        <!-- Sign In Form -->
+        <form id="formLogin">
+          <div class="form-group">
+            <label class="form-label" for="loginEmail">Email Address</label>
+            <input type="email" id="loginEmail" class="form-input" placeholder="you@domain.com" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="loginPassword">Password</label>
+            <input type="password" id="loginPassword" class="form-input" placeholder="••••••••" required />
+          </div>
+          <div id="loginError" class="form-error"></div>
+          <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 12px; padding: 12px;">
+            Sign In to Account
+          </button>
+        </form>
+
+        <!-- Register Form -->
+        <form id="formRegister" style="display: none;">
+          <div class="form-group">
+            <label class="form-label" for="regName">Full Name</label>
+            <input type="text" id="regName" class="form-input" placeholder="Jane Doe" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="regEmail">Email Address</label>
+            <input type="email" id="regEmail" class="form-input" placeholder="you@domain.com" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="regPassword">Create Password (min. 6 characters)</label>
+            <input type="password" id="regPassword" class="form-input" placeholder="••••••••" minlength="6" required />
+          </div>
+          <div id="regError" class="form-error"></div>
+          <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 12px; padding: 12px;">
+            Create My Account
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Authenticated Checkout Modal -->
+  <div id="checkoutModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Complete Checkout</h3>
+        <button class="modal-close-btn">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="checkoutForm">
+          <div style="font-size: 0.825rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px;">
+            1. Shipping Information
+          </div>
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input type="text" id="shippingFullName" class="form-input" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Street Address</label>
+            <input type="text" id="shippingAddress" class="form-input" placeholder="123 Artisan Way, Apt 4" required />
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="form-group">
+              <label class="form-label">City</label>
+              <input type="text" id="shippingCity" class="form-input" placeholder="Seattle" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Postal / ZIP Code</label>
+              <input type="text" id="shippingPostal" class="form-input" placeholder="98101" required />
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="form-group">
+              <label class="form-label">Country</label>
+              <input type="text" id="shippingCountry" class="form-input" value="United States" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Phone Number</label>
+              <input type="tel" id="shippingPhone" class="form-input" placeholder="+1 (555) 019-2834" required />
+            </div>
+          </div>
+
+          <div style="font-size: 0.825rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin: 20px 0 12px 0;">
+            2. Payment Method
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+            <label style="display: flex; align-items: center; gap: 8px; padding: 10px; border: 1px solid var(--border-hairline); border-radius: var(--radius-md); cursor: pointer;">
+              <input type="radio" name="paymentMethod" value="Credit / Debit Card" checked />
+              <span style="font-size: 0.875rem;">Credit / Debit Card (Instant Authorization)</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; padding: 10px; border: 1px solid var(--border-hairline); border-radius: var(--radius-md); cursor: pointer;">
+              <input type="radio" name="paymentMethod" value="UPI / Net Banking" />
+              <span style="font-size: 0.875rem;">UPI / Net Banking</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; padding: 10px; border: 1px solid var(--border-hairline); border-radius: var(--radius-md); cursor: pointer;">
+              <input type="radio" name="paymentMethod" value="Cash on Delivery" />
+              <span style="font-size: 0.875rem;">Cash on Delivery (Pay upon arrival)</span>
+            </label>
+          </div>
+
+          <div style="background: var(--bg-surface-subtle); padding: 16px; border-radius: var(--radius-md); margin-bottom: 20px;">
+            <div class="order-summary-row">
+              <span>Items (<span id="checkoutItemsCount">0</span>)</span>
+              <span id="checkoutSubtotal" class="tabular-nums">$0.00</span>
+            </div>
+            <div class="order-summary-row">
+              <span>Shipping</span>
+              <span id="checkoutShipping" class="tabular-nums">$0.00</span>
+            </div>
+            <div class="order-summary-row">
+              <span>Estimated Tax</span>
+              <span id="checkoutTax" class="tabular-nums">$0.00</span>
+            </div>
+            <div class="order-summary-row order-summary-total">
+              <span>Total Due</span>
+              <span id="checkoutTotal" class="tabular-nums">$0.00</span>
+            </div>
+          </div>
+
+          <button type="submit" id="placeOrderBtn" class="btn btn-primary" style="width: 100%; padding: 14px;">
+            Place Order & Pay
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Confirmation Modal -->
+  <div id="orderConfirmModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Order Status</h3>
+        <button class="modal-close-btn">✕</button>
+      </div>
+      <div id="orderConfirmContent" class="modal-body">
+        <!-- Injected via JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Order History Modal -->
+  <div id="orderHistoryModal" class="modal-overlay">
+    <div class="modal-card modal-card-lg">
+      <div class="modal-header">
+        <h3 class="modal-title">My Order History</h3>
+        <button class="modal-close-btn">✕</button>
+      </div>
+      <div class="modal-body">
+        <div id="orderHistoryList">
+          <!-- Populated via JavaScript -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MongoDB Atlas Diagnostics & Internship Details Modal -->
+  <div id="diagnosticsModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">MongoDB Atlas Architecture</h3>
+        <button class="modal-close-btn">✕</button>
+      </div>
+      <div id="diagnosticsContent" class="modal-body">
+        <!-- Injected via JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Toast Container -->
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand-title">LUMEN STUDIO</div>
+          <p class="footer-desc">
+            A full-stack, responsive e-commerce web application engineered with plain HTML5, CSS3, vanilla JavaScript, Node.js Express, and MongoDB Atlas.
+          </p>
+          <p style="font-size: 0.775rem; color: #71717a;">
+            CodeAlpha Full-Stack Web Development Internship
+          </p>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Shop</div>
+          <ul class="footer-links">
+            <li><a href="#catalogSection">All Collections</a></li>
+            <li><a href="#catalogSection">Sculptural Ceramics</a></li>
+            <li><a href="#catalogSection">Studio Audio</a></li>
+            <li><a href="#catalogSection">Organic Textiles</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Engineering</div>
+          <ul class="footer-links">
+            <li><a href="#" id="footerDbStatusBtn">MongoDB Atlas Status</a></li>
+            <li><a href="/api/health" target="_blank">API Health Status</a></li>
+            <li><a href="/api/products" target="_blank">Products REST API</a></li>
+            <li><a href="/api/config/status" target="_blank">System JSON Config</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Internship Info</div>
+          <p style="font-size: 0.85rem; line-height: 1.6; color: #a1a1aa; margin-bottom: 8px;">
+            <strong>Track:</strong> Web Development<br />
+            <strong>Task:</strong> Simple E-Commerce Store<br />
+            <strong>Organization:</strong> CodeAlpha
+          </p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>&copy; 2026 LUMEN Studio · CodeAlpha Internship Project. All rights reserved.</div>
+        <div style="display: flex; gap: 16px;">
+          <span>Zero Frontend Frameworks</span>
+          <span>·</span>
+          <span>Node.js &amp; Express</span>
+          <span>·</span>
+          <span>MongoDB Atlas</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Vanilla JavaScript Modules -->
+  <script src="/js/api.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

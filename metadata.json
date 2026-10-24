@@ -1,0 +1,6 @@
+{
+  "name": "LUMEN Studio - Simple E-Commerce Store",
+  "description": "A polished full-stack e-commerce store with vanilla HTML5/CSS/JavaScript frontend, Node.js Express backend, and MongoDB Atlas with Mongoose.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
